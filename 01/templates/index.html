@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CSVを使ったデータ分析</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+<body>
+  <h1>交通事故分析</h1>
+  <p>警察庁の2023年度の交通事故統計情報のオープンデータを利用して、曜日、天候、年齢ごとの事故件数、事故における死亡者数、負傷者数、事故の地図分布を行った。</p>
+
+<h2>曜日ごとの事故件数</h2>
+<p></p>
+  <img src="{{ graph_path }}" alt="曜日別事故件数のグラフ" width="600">
+
+  <h2>死者数</h2>
+  <ul>
+    <li>平均: {{ avg_fatalities|round(2) }}</li>
+    <li>最大: {{ max_fatalities }}</li>
+    <li>最小: {{ min_fatalities }}</li>
+  </ul>
+
+  <h2>負傷者数</h2>
+  <ul>
+    <li>平均: {{ avg_injuries|round(2) }}</li>
+    <li>最大: {{ max_injuries }}</li>
+    <li>最小: {{ min_injuries }}</li>
+  </ul>
+
+<h2>天候ごとの事故件数</h2>
+  <p>2023年度の交通事故が発生した天候をグラフとしてまとめた結果である。横軸のデータは左から晴、曇り、雨、霧、雪である。</p>
+  <img src="static/accidents_by_weather.png" width="600">
+
+<h2>年齢ごとの事故件数</h2>
+<p>2023年度の交通事故が発生した加害者側の年齢をグラフとしてまとめた結果である。横軸のデータは左から年齢不詳、0歳から24歳、25歳から34歳、35歳から44歳、45歳から54歳、55歳から64歳、65歳から74歳、75歳以上を表している。</p>
+  <img src="static/accidents_by_age.png" width="600">
+
+<h2>事故地点の地図表示</h2>
+<div id="map" style="height:500px; width:800px"></div>
+
+<script>
+  // Flaskから受け取った位置情報（Python → JS）
+  const locations = {{ locations|tojson }};
+  
+  // 地図の初期設定（日本中心）
+  const map = L.map('map').setView([35.0, 135.0], 5);
+
+  // OpenStreetMap タイル設定
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+  }).addTo(map);
+
+  // 事故地点を全てマーカーで表示
+  locations.forEach(([lat, lng]) => {
+      L.marker([lat, lng]).addTo(map);
+  });
+</script>
+
+<h2>分析</h2>
+<p>本データにおいて、曜日ごとに見ると金曜日、年齢ごとに見ると45歳～55歳の年代、天候別では晴れの天候でそれぞれ交通事故が多いという結果が得られた。
+  金曜日は次の日から土日と休日に入る方が多く、交通量が多くなることから交通事故もそれに連ねて多くなっていく傾向がある。
+  また、雨や雪など天候が悪い時は慎重に運転している傾向にあるので、交通事故が少ない。
+  一方、天候が晴れのときは、見通しが良くスピードを出しすぎてしまうことや気が緩んでしまうことから事故が起こりやすい傾向にある。
+  また、45歳～64歳までは出勤や退勤など自動車を利用することが多いことや20代や30代に比べて自動車を使い慣れて気が緩んでいることから事故件数が多くなっている傾向がある。
+
+</p>
+
+<footer style="margin-top: 80px; font-size: 0.9em; color: #666;">
+  <p>参考サイト：<a href="https://www.npa.go.jp/publications/statistics/koutsuu/opendata/index_opendata.html">警察庁　交通事故統計情報のオープンデータ</a></p>
+  <p>参考データ：<a href="{{ url_for('static', filename='data/honhyo_2023.csv') }}">CSVファイル（2023年）</a></p>
+  <p>参考データの見方：<a href="https://www.npa.go.jp/publications/statistics/koutsuu/opendata/2023/codebook_2023.xlsx">各種コード表</a></p>
+</footer>
+
+
+    
+
+</body>
+</html>

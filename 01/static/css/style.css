@@ -1,0 +1,31 @@
+body {
+    background-color:#9DFFF7 ;
+    font-family: "Helvetica", sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #004c8c;
+    border-bottom: 3px solid #0077c2;
+    padding-bottom: 10px;
+}
+
+h2 {
+    margin-top: 50px;
+}
+
+p {
+    font-size: 20px;
+}
+
+img {
+    border: 2px solid #0077c2;
+    border-radius: 10px;
+    margin-top: 30px;
+    margin-bottom: 70px;
+}
+
+#map {
+    border: 3px solid #004c8c;
+    margin-top: 50px;
+}
